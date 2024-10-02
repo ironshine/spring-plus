@@ -17,6 +17,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
+
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -49,10 +51,32 @@ public class TodoService {
         );
     }
 
-    public Page<TodoResponse> getTodos(int page, int size) {
+    public Page<TodoResponse> getTodos(int page, int size, String weather, LocalDateTime startDate, LocalDateTime endDate) {
         Pageable pageable = PageRequest.of(page - 1, size);
+        Page<Todo> todos;
 
-        Page<Todo> todos = todoRepository.findAllByOrderByModifiedAtDesc(pageable);
+        if (weather == null) {
+            if (startDate == null && endDate == null) {
+                todos = todoRepository.findAllByOrderByModifiedAtDesc(pageable);
+            } else if (startDate == null) {
+                todos = todoRepository.findAllByEndDateOrderByModifiedAtDesc(pageable, endDate);
+            } else if (endDate == null) {
+                todos = todoRepository.findAllByStartDateOrderByModifiedAtDesc(pageable, startDate);
+            } else {
+                todos = todoRepository.findAllByBetweenStartDateAndEndDateOrderByModifiedAtDesc(pageable, startDate, endDate);
+            }
+        } else {
+            if (startDate == null && endDate == null) {
+                todos = todoRepository.findAllByOrderByModifiedAtDesc(pageable, weather);
+            } else if (startDate == null) {
+                todos = todoRepository.findAllByEndDateOrderByModifiedAtDesc(pageable, weather, endDate);
+            } else if (endDate == null) {
+                todos = todoRepository.findAllByStartDateOrderByModifiedAtDesc(pageable, weather, startDate);
+            } else {
+                todos = todoRepository.findAllByBetweenStartDateAndEndDateOrderByModifiedAtDesc(pageable, weather, startDate, endDate);
+            }
+        }
+
 
         return todos.map(todo -> new TodoResponse(
                 todo.getId(),
