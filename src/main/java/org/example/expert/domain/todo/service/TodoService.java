@@ -55,40 +55,8 @@ public class TodoService {
 
     public Page<TodoResponse> getTodos(int page, int size, String weather, LocalDateTime startDate, LocalDateTime endDate) {
         Pageable pageable = PageRequest.of(page - 1, size);
-        Page<Todo> todos;
 
-        if (weather == null) {
-            if (startDate == null && endDate == null) {
-                todos = todoRepository.findAllByOrderByModifiedAtDesc(pageable);
-            } else if (startDate == null) {
-                todos = todoRepository.findAllByEndDateOrderByModifiedAtDesc(pageable, endDate);
-            } else if (endDate == null) {
-                todos = todoRepository.findAllByStartDateOrderByModifiedAtDesc(pageable, startDate);
-            } else {
-                todos = todoRepository.findAllByBetweenStartDateAndEndDateOrderByModifiedAtDesc(pageable, startDate, endDate);
-            }
-        } else {
-            if (startDate == null && endDate == null) {
-                todos = todoRepository.findAllByOrderByModifiedAtDesc(pageable, weather);
-            } else if (startDate == null) {
-                todos = todoRepository.findAllByEndDateOrderByModifiedAtDesc(pageable, weather, endDate);
-            } else if (endDate == null) {
-                todos = todoRepository.findAllByStartDateOrderByModifiedAtDesc(pageable, weather, startDate);
-            } else {
-                todos = todoRepository.findAllByBetweenStartDateAndEndDateOrderByModifiedAtDesc(pageable, weather, startDate, endDate);
-            }
-        }
-
-
-        return todos.map(todo -> new TodoResponse(
-                todo.getId(),
-                todo.getTitle(),
-                todo.getContents(),
-                todo.getWeather(),
-                new UserResponse(todo.getUser().getId(), todo.getUser().getEmail()),
-                todo.getCreatedAt(),
-                todo.getModifiedAt()
-        ));
+        return todoRepositoryQuery.findAllOrderByModifiedAtDesc(pageable, weather, startDate, endDate);
     }
 
     public TodoResponse getTodo(long todoId) {
