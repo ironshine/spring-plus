@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -66,7 +67,7 @@ public class UserService {
     public ResponseEntity<String> uploadFile(MultipartFile file, Long userId) {
         try {
             String fileName = file.getOriginalFilename();
-            String fileUrl = "https://" + bucket + "/test" + fileName;
+            String fileUrl = "https://" + bucket + "/test" + UUID.randomUUID() + fileName;
 
             ObjectMetadata metadata = new ObjectMetadata();
             metadata.setContentType(file.getContentType());
