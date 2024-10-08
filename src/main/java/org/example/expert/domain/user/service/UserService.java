@@ -66,8 +66,8 @@ public class UserService {
     @Transactional
     public ResponseEntity<String> uploadFile(MultipartFile file, Long userId) {
         try {
-            String fileName = file.getOriginalFilename();
-            String fileUrl = "https://" + bucket + "/test" + UUID.randomUUID() + fileName;
+            String fileName = UUID.randomUUID() + file.getOriginalFilename();
+            String fileUrl = "https://" + bucket + ".s3." + "ap-northeast-2" + ".amazonaws.com/" + fileName;
 
             ObjectMetadata metadata = new ObjectMetadata();
             metadata.setContentType(file.getContentType());
