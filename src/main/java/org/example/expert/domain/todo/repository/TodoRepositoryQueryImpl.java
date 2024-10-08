@@ -1,10 +1,8 @@
 package org.example.expert.domain.todo.repository;
 
-import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
-import org.example.expert.domain.manager.entity.QManager;
 import org.example.expert.domain.todo.dto.response.QTodoSearchResponse;
 import org.example.expert.domain.todo.dto.response.TodoResponse;
 import org.example.expert.domain.todo.dto.response.TodoSearchResponse;
@@ -115,12 +113,15 @@ public class TodoRepositoryQueryImpl implements TodoRepositoryQuery {
 
         return new PageImpl<>(results, pageable, results.size());
     }
+
     private BooleanExpression titleLike(String title) {
         return title != null ? todo.title.like("%" + title + "%") : todo.title.isNotNull();
     }
+
     private BooleanExpression nicknameLike(String nickname) {
         return nickname != null ? user.nickname.like("%" + nickname + "%") : user.nickname.isNotNull();
     }
+
     private BooleanExpression createdDateRange(LocalDateTime startDate, LocalDateTime endDate) {
         if (startDate == null && endDate == null) {
             return todo.createdAt.isNotNull();
